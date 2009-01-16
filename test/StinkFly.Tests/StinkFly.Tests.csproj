@@ -60,6 +60,7 @@
     <Compile Include="SpecBase\ObjectAssertExtensions.cs" />
     <Compile Include="SpecBase\Spec.cs" />
     <Compile Include="SpecBase\StringAssertionExtensions.cs" />
+    <Compile Include="UrlMatching.cs" />
     <Compile Include="UrlParsing.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
