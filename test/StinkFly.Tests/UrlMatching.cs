@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Xunit.Extensions.AssertExtensions;
 namespace StinkFly.Tests
@@ -54,16 +55,33 @@ namespace StinkFly.Tests
 		private class TreeNode<NODE>
 		{
 			private NODE _value;
-			private List<NODE> _children;
+
+			private List<TreeNode<NODE>> _children;
 			public TreeNode(NODE _value)
 			{
 				this._value = _value;
-				_children = new List<NODE>();
+				_children = new List<TreeNode<NODE>>();
 			}
 
-			public void AddChild(NODE child)
+
+			public TreeNode<NODE> AddChild(NODE child)
 			{
-				_children.Add(child);
+				var newNode = new TreeNode<NODE>(child);
+				_children.Add(newNode);
+				return newNode;
+			}
+
+			public IEnumerable<TreeNode<NODE>> Children()
+			{
+				foreach(var c in _children)
+				{
+					yield return c;
+				}
+			}
+
+			public NODE Value
+			{
+				get{ return _value;}
 			}
 		}
 
@@ -72,7 +90,7 @@ namespace StinkFly.Tests
 			public TreeNode<UrlPart> Root { get; set;}
 		}
 
-		private Dictionary<string, RETURNS> _lookup;
+		private Dictionary<TreeNode<UrlPart>, RETURNS> _lookup;
 		private UrlParser _parser;
 		private PartTree _partTree;
 
@@ -80,23 +98,65 @@ namespace StinkFly.Tests
 		{
 			_parser = new UrlParser();
 			_partTree = new PartTree();
+			_lookup = new Dictionary<TreeNode<UrlPart>, RETURNS>();
 			_partTree.Root = new TreeNode<UrlPart>(new FixedStringUrlPart("/"));
 		}
 
 		public void AddUrl(string url, RETURNS mapsTo)
 		{
-			var parts = parser.Parse(url);
-			
+			var parts = _parser.Parse(url);
+			var currentNode = _partTree.Root;
+			var partsToDo = new Queue<UrlPart>(parts);
+			while(partsToDo.Count > 0)
+			{
+				var currentPart = partsToDo.Dequeue();
+				bool partIsAlreadyInTree = false;
+				foreach(var node in currentNode.Children())
+				{
+					if(node.Value.CanMatch(currentPart))
+					{
+						partIsAlreadyInTree = true;
+						currentNode = node;
+						break;
+					}
+				}
+
+				if(!partIsAlreadyInTree)
+				{
+					currentNode = currentNode.AddChild(currentPart);
+				}
+			}
+
+			_lookup.Add(currentNode,mapsTo);
 
 		}
 
 		public RETURNS Map(string url)
 		{
-			if(url == "/hello/chris")
+			var parts = _parser.Parse(url);
+			var partsToDo = new Queue<UrlPart>(parts);
+			var currentNode = _partTree.Root;
+			while(partsToDo.Count > 0)
 			{
-				return _lookup["/hello/{name}"];
+				var currentPart = partsToDo.Dequeue();
+				bool found = false;
+				foreach (var child in currentNode.Children())
+				{
+					if(child.Value.CanMatch(currentPart))
+					{
+						currentNode = child;
+						found = true;
+						break;
+					}
+				}
+
+				if(!found)
+				{
+					throw new Exception("Couldn't find a match");
+				}
 			}
-			return _lookup[url];
+
+			return _lookup[currentNode];
 		}
 	}
 }

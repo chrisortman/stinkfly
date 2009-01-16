@@ -59,9 +59,30 @@ namespace StinkFly.Tests
 
 	public class VariableUrlPart : UrlPart
 	{
+		private string _paramName;
+
 		public VariableUrlPart(string chunk)
 		{
-			
+			if(String.IsNullOrEmpty(chunk))
+			{
+				throw new Exception("Can't use empty chunk");
+			}
+			_paramName = chunk;
+		}
+
+		public override bool CanMatch(UrlPart other) {
+		
+			if(other is FixedStringUrlPart)
+			{
+				return true;
+			} else if(other is VariableUrlPart)
+			{
+				return ((VariableUrlPart) other)._paramName.Equals(_paramName, StringComparison.InvariantCultureIgnoreCase);
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 
@@ -96,17 +117,32 @@ namespace StinkFly.Tests
 		{
 			return _urlChunk.GetHashCode();
 		}
+
+		public override bool CanMatch(UrlPart other) {
+			if(other is FixedStringUrlPart)
+			{
+				return ((FixedStringUrlPart) other)._urlChunk.Equals(_urlChunk, StringComparison.InvariantCultureIgnoreCase);
+			}
+			else
+			{
+				return false;
+			}
+		}
 	}
 
 	public class UrlPart
 	{
+		public virtual bool CanMatch(UrlPart other)
+		{
+			return true;
+		}
 	}
 
 	public class UrlParser
 	{
 		public IEnumerable<UrlPart> Parse(string url)
 		{
-			return SplitUrlIntoChunks(url).Select(x => CreatePart(x));
+			return SplitUrlIntoChunks(url).Where(x => x != "").Select(x => CreatePart(x));
 		}
 
 		private static string[] SplitUrlIntoChunks(string url)
