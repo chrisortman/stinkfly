@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit.Extensions.AssertExtensions;
 namespace StinkFly.Tests
 {
@@ -20,13 +21,20 @@ namespace StinkFly.Tests
 
 		public class When_mapping_urls_with_fixed_values_and_variables :Spec
 		{
-			private UrlMapper<string> _mapper;
+			protected UrlMapper<string> _mapper;
+			protected Dictionary<string,string> testUrls = new Dictionary<string, string>()
+			{
+				{"/hello/index","2fixed"},
+				{"/hello/{name}","helloName"}
+			};
 
 			public override void EstablishContext() {
 				_mapper = new UrlMapper<string>();
-				_mapper.AddUrl("/hello/index", "2fixed");
-				_mapper.AddUrl("/hello/{name}","helloName");
-
+				
+				foreach(var url in testUrls.Keys)
+				{
+					_mapper.AddUrl(url, testUrls[url]);
+				}
 			}
 
 			[Observation]
@@ -46,6 +54,18 @@ namespace StinkFly.Tests
 			public void should_map_hello_chris_to_helloName()
 			{
 				_mapper.Map("/hello/chris").ShouldEqual("helloName");
+			}
+		}
+
+		public class Try_not_to_be_order_dependent : When_mapping_urls_with_fixed_values_and_variables
+		{
+			public override void EstablishContext() 
+			{
+				_mapper = new UrlMapper<string>();
+				foreach(var url in testUrls.Keys.Reverse())
+				{
+					_mapper.AddUrl(url, testUrls[url]);
+				}
 			}
 		}
 	}
