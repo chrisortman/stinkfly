@@ -1,0 +1,215 @@
+using System;
+using System.Collections.Generic;
+using Xunit;
+using Xunit.Extensions.AssertExtensions;
+namespace StinkFly.Tests
+{
+	public class TreeSpecs : Spec
+	{
+		protected UrlTree<string> tree;
+
+		public override void EstablishContext() 
+		{
+				tree = new UrlTree<string>("chris");
+				tree.Add("damon");
+				tree.Add("mason");
+				tree.Add("clara");
+		}
+
+		public class A_tree_with_three_nodes : TreeSpecs
+		{
+
+			[Observation]
+			public void Should_be_able_to_count()
+			{
+				tree.NodeCount.ShouldEqual(3);
+			}
+
+			[Observation]
+			public void Current_should_be_initial()
+			{
+				tree.Current.ShouldEqual("chris");
+			}
+
+			[Observation]
+			public void Move_to_should_change_current()
+			{
+				tree.MoveTo("mason");
+				tree.Current.ShouldEqual("mason");
+			}
+			
+		}
+
+		public class When_moving_to_a_node_that_does_not_exist : TreeSpecs
+		{
+			private bool move_to_return;
+
+			public override void Because() 
+			{
+				move_to_return = tree.MoveTo("bart");
+			}
+
+			[Observation]
+			public void Should_not_destroy_current()
+			{
+				tree.Current.ShouldEqual("chris");
+			}
+
+			[Observation]
+			public void Move_to_should_return_false()
+			{
+				move_to_return.ShouldBeFalse();
+			}
+		}
+
+		public class When_you_have_moved_to_a_child_node : TreeSpecs
+		{
+			private bool move_to_return;
+			public override void Because() 
+			{
+				move_to_return = tree.MoveTo("mason");
+			}
+
+			public void Move_to_should_return_true()
+			{
+				move_to_return.ShouldBeTrue();
+			}
+
+			[Observation]
+			public void Count_should_be_new_current_node_count()
+			{
+				tree.NodeCount.ShouldEqual(0);
+			}
+
+			[Observation]
+			public void Adding_should_add_to_that_node()
+			{
+				tree.Add("puppy");
+				tree.NodeCount.ShouldEqual(1);
+				tree.MoveTo("puppy");
+				tree.Current.ShouldEqual("puppy");
+			}
+		}
+	}
+
+	public class TreeNode<VALUE>
+	{
+		private VALUE _value;
+		private List<TreeNode<VALUE>> _children;
+		private IDictionary<string, object> _extensionData;
+
+		public TreeNode(VALUE _value)
+		{
+			this._value = _value;
+			_children = new List<TreeNode<VALUE>>();
+			_extensionData = new Dictionary<string, object>();
+		}
+
+		public int NodeCount
+		{
+			get
+			{
+				return _children.Count;
+			}
+		}
+
+		public IDictionary<string,object> ExtensionData
+		{
+			get { return _extensionData; }
+		}
+
+		public VALUE Value
+		{
+			get{ return _value;}
+		}
+
+		public void AddChild(VALUE value)
+		{
+			_children.Add(new TreeNode<VALUE>(value));
+		}
+
+		public IEnumerable<TreeNode<VALUE>> ChildNodes()
+		{
+			foreach(var c in _children)
+			{
+				yield return c;
+			}
+		}
+	}
+
+	public class UrlTree<TYPE>
+	{
+		private readonly TreeNode<TYPE> _rootNode;
+		private TreeNode<TYPE> _currentNode;
+
+		public UrlTree(TYPE initialValue)
+		{
+			_rootNode = new TreeNode<TYPE>(initialValue);
+			_currentNode = _rootNode;
+		}
+
+		public void Add(TYPE value)
+		{
+			_currentNode.AddChild(value);
+		}
+
+		public TYPE Current
+		{
+			get
+			{
+				return _currentNode.Value;
+			}
+		}
+
+		public int NodeCount
+		{
+			get
+			{
+				return _currentNode.NodeCount;
+			}
+		}
+
+		public void AddExtensionData(string key, object value)
+		{
+			_currentNode.ExtensionData[key] = value;
+		}
+
+		public object GetExtensionData(string key)
+		{
+			return _currentNode.ExtensionData[key];
+		}
+
+		public bool MoveTo(TYPE value)
+		{
+			foreach(var childNode in _currentNode.ChildNodes())
+			{
+				if(childNode.Value.Equals(value))
+				{
+					_currentNode = childNode;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool MoveToFirst(Predicate<TYPE> matcher)
+		{
+			foreach( var child in _currentNode.ChildNodes())
+			{
+				if(matcher(child.Value))
+				{
+					_currentNode = child;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool MoveToRoot()
+		{
+			_currentNode = _rootNode;
+			return true;
+		}
+		
+	}
+}

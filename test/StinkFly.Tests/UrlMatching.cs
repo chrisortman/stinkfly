@@ -72,111 +72,58 @@ namespace StinkFly.Tests
 
 	public class UrlMapper<RETURNS>
 	{
-		private class TreeNode<NODE>
-		{
-			private NODE _value;
 
-			private List<TreeNode<NODE>> _children;
-			public TreeNode(NODE _value)
-			{
-				this._value = _value;
-				_children = new List<TreeNode<NODE>>();
-			}
-
-
-			public TreeNode<NODE> AddChild(NODE child)
-			{
-				var newNode = new TreeNode<NODE>(child);
-				_children.Add(newNode);
-				return newNode;
-			}
-
-			public IEnumerable<TreeNode<NODE>> Children()
-			{
-				foreach(var c in _children)
-				{
-					yield return c;
-				}
-			}
-
-			public NODE Value
-			{
-				get{ return _value;}
-			}
-		}
-
-		private class PartTree
-		{
-			public TreeNode<UrlPart> Root { get; set;}
-		}
-
-		private Dictionary<TreeNode<UrlPart>, RETURNS> _lookup;
 		private UrlParser _parser;
-		private PartTree _partTree;
-
+		private UrlTree<UrlPart> _partTree;
 		public UrlMapper()
 		{
 			_parser = new UrlParser();
-			_partTree = new PartTree();
-			_lookup = new Dictionary<TreeNode<UrlPart>, RETURNS>();
-			_partTree.Root = new TreeNode<UrlPart>(new FixedStringUrlPart("/"));
+			_partTree = new UrlTree<UrlPart>(new FixedStringUrlPart("/"));
 		}
+
 
 		public void AddUrl(string url, RETURNS mapsTo)
 		{
+			_partTree.MoveToRoot();
+
 			var parts = _parser.Parse(url);
-			var currentNode = _partTree.Root;
+			
 			var partsToDo = new Queue<UrlPart>(parts);
 			while(partsToDo.Count > 0)
 			{
 				var currentPart = partsToDo.Dequeue();
-				bool partIsAlreadyInTree = false;
-				foreach(var node in currentNode.Children())
-				{
-					if(node.Value.CanMatch(currentPart))
-					{
-						partIsAlreadyInTree = true;
-						currentNode = node;
-						break;
-					}
-				}
 
-				if(!partIsAlreadyInTree)
+				if(_partTree.MoveTo(currentPart))
 				{
-					currentNode = currentNode.AddChild(currentPart);
+					continue;
+				}
+				else
+				{
+					_partTree.Add(currentPart);
+					_partTree.MoveTo(currentPart);
 				}
 			}
 
-			_lookup.Add(currentNode,mapsTo);
-
+			_partTree.AddExtensionData("mapsto", mapsTo);
 		}
 
 		public RETURNS Map(string url)
 		{
 			var parts = _parser.Parse(url);
-			var partsToDo = new Queue<UrlPart>(parts);
-			var currentNode = _partTree.Root;
-			while(partsToDo.Count > 0)
+			_partTree.MoveToRoot();
+			foreach(var part in parts)
 			{
-				var currentPart = partsToDo.Dequeue();
-				bool found = false;
-				foreach (var child in currentNode.Children())
+				if(_partTree.MoveTo(part))
 				{
-					if(child.Value.CanMatch(currentPart))
-					{
-						currentNode = child;
-						found = true;
-						break;
-					}
+					continue;
 				}
-
-				if(!found)
+				else if(_partTree.MoveToFirst(x => x.CanMatch(part)))
 				{
-					throw new Exception("Couldn't find a match");
+					continue;
 				}
 			}
 
-			return _lookup[currentNode];
+			return (RETURNS) _partTree.GetExtensionData("mapsto");
 		}
 	}
 }
