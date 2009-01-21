@@ -57,6 +57,34 @@ namespace StinkFly.Tests
 			}
 		}
 
+		public class When_mapping_a_bunch_of_different_patterns : Spec
+		{
+			protected UrlMapper<string> _mapper; 
+
+			public override void EstablishContext() 
+			{
+				_mapper = new UrlMapper<string>();
+				_mapper.AddUrl("/blogs/comments", "allcomments");
+				_mapper.AddUrl("/blogs/{year}/{month}/{day}", "blogurl");
+				_mapper.AddUrl("/users/{username}", "userurl");
+				_mapper.AddUrl("/", "defaulturl");
+				_mapper.AddUrl("/blogs/comments/{id}","onecomment");
+				_mapper.AddUrl("/users/list", "listuserurl");
+			}
+
+			[Observation]
+			public void urls_should_resolve_correctly()
+			{
+				_mapper.Map("/").ShouldEqual("defaulturl");
+				_mapper.Map("/blogs/2008/01/21").ShouldEqual("blogurl");
+				_mapper.Map("/blogs/comments").ShouldEqual("allcomments");
+				_mapper.Map("/blogs/comments/2").ShouldEqual("onecomment");
+				_mapper.Map("/users/chris").ShouldEqual("userurl");
+				_mapper.Map("/users/list").ShouldEqual("listuserurl");
+			}
+
+		}
+
 		public class Try_not_to_be_order_dependent : When_mapping_urls_with_fixed_values_and_variables
 		{
 			public override void EstablishContext() 
