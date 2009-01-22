@@ -64,6 +64,12 @@
     <Compile Include="UrlMatching.cs" />
     <Compile Include="UrlParsing.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Stinkfly\StinkFly.csproj">
+      <Project>{35FB80A1-1F7C-4D0E-A637-4E2956AC497B}</Project>
+      <Name>StinkFly</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
