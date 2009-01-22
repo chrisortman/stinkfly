@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace StinkFly
 {
+	using System.Collections.Generic;
+	using System.Linq;
+
 	public class UrlParser
 	{
 		public IEnumerable<UrlPart> Parse(string url)
@@ -17,7 +17,7 @@ namespace StinkFly
 
 		private static UrlPart CreatePart(string chunk)
 		{
-			if(chunk.StartsWith("{"))
+			if (chunk.StartsWith("{"))
 			{
 				return new VariableUrlPart(chunk);
 			}

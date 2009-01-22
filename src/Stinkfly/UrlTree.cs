@@ -1,7 +1,7 @@
-using System;
-
 namespace StinkFly
 {
+	using System;
+
 	public class UrlTree<TYPE>
 	{
 		private readonly TreeNode<TYPE> _rootNode;
@@ -13,25 +13,19 @@ namespace StinkFly
 			_currentNode = _rootNode;
 		}
 
-		public void Add(TYPE value)
-		{
-			_currentNode.AddChild(value);
-		}
-
 		public TYPE Current
 		{
-			get
-			{
-				return _currentNode.Value;
-			}
+			get { return _currentNode.Value; }
 		}
 
 		public int NodeCount
 		{
-			get
-			{
-				return _currentNode.NodeCount;
-			}
+			get { return _currentNode.NodeCount; }
+		}
+
+		public void Add(TYPE value)
+		{
+			_currentNode.AddChild(value);
 		}
 
 		public void AddExtensionData(string key, object value)
@@ -46,9 +40,9 @@ namespace StinkFly
 
 		public bool MoveTo(TYPE value)
 		{
-			foreach(var childNode in _currentNode.ChildNodes())
+			foreach (var childNode in _currentNode.ChildNodes())
 			{
-				if(childNode.Value.Equals(value))
+				if (childNode.Value.Equals(value))
 				{
 					_currentNode = childNode;
 					return true;
@@ -59,9 +53,9 @@ namespace StinkFly
 
 		public bool MoveToFirst(Predicate<TYPE> matcher)
 		{
-			foreach( var child in _currentNode.ChildNodes())
+			foreach (var child in _currentNode.ChildNodes())
 			{
-				if(matcher(child.Value))
+				if (matcher(child.Value))
 				{
 					_currentNode = child;
 					return true;
@@ -75,6 +69,5 @@ namespace StinkFly
 			_currentNode = _rootNode;
 			return true;
 		}
-		
 	}
 }

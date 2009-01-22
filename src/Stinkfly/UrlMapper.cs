@@ -1,12 +1,12 @@
-using System.Collections.Generic;
-
 namespace StinkFly
 {
+	using System.Collections.Generic;
+
 	public class UrlMapper<RETURNS>
 	{
+		private readonly UrlParser _parser;
+		private readonly UrlTree<UrlPart> _partTree;
 
-		private UrlParser _parser;
-		private UrlTree<UrlPart> _partTree;
 		public UrlMapper()
 		{
 			_parser = new UrlParser();
@@ -18,14 +18,14 @@ namespace StinkFly
 		{
 			_partTree.MoveToRoot();
 
-			var parts = _parser.Parse(url);
-			
-			var partsToDo = new Queue<UrlPart>(parts);
-			while(partsToDo.Count > 0)
-			{
-				var currentPart = partsToDo.Dequeue();
+			IEnumerable<UrlPart> parts = _parser.Parse(url);
 
-				if(_partTree.MoveTo(currentPart))
+			var partsToDo = new Queue<UrlPart>(parts);
+			while (partsToDo.Count > 0)
+			{
+				UrlPart currentPart = partsToDo.Dequeue();
+
+				if (_partTree.MoveTo(currentPart))
 				{
 					continue;
 				}
@@ -41,15 +41,15 @@ namespace StinkFly
 
 		public RETURNS Map(string url)
 		{
-			var parts = _parser.Parse(url);
+			IEnumerable<UrlPart> parts = _parser.Parse(url);
 			_partTree.MoveToRoot();
-			foreach(var part in parts)
+			foreach (UrlPart part in parts)
 			{
-				if(_partTree.MoveTo(part))
+				if (_partTree.MoveTo(part))
 				{
 					continue;
 				}
-				else if(_partTree.MoveToFirst(x => x.CanMatch(part)))
+				else if (_partTree.MoveToFirst(x => x.CanMatch(part)))
 				{
 					continue;
 				}

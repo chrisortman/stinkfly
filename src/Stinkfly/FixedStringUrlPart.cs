@@ -1,13 +1,14 @@
-using System;
-
 namespace StinkFly
 {
+	using System;
+
 	public class FixedStringUrlPart : UrlPart
 	{
-		private string _urlChunk;
+		private readonly string _urlChunk;
+
 		public FixedStringUrlPart(string urlChunk)
 		{
-			if(String.IsNullOrEmpty(urlChunk))
+			if (String.IsNullOrEmpty(urlChunk))
 			{
 				throw new ArgumentNullException("urlChunk", "urlChunk can not be null");
 			}
@@ -34,8 +35,9 @@ namespace StinkFly
 			return _urlChunk.GetHashCode();
 		}
 
-		public override bool CanMatch(UrlPart other) {
-			if(other is FixedStringUrlPart)
+		public override bool CanMatch(UrlPart other)
+		{
+			if (other is FixedStringUrlPart)
 			{
 				return ((FixedStringUrlPart) other)._urlChunk.Equals(_urlChunk, StringComparison.InvariantCultureIgnoreCase);
 			}
