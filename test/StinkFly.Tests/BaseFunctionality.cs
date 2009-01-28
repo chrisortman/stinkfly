@@ -1,94 +1,9 @@
 namespace StinkFly.Tests
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Linq;
 
 	using Xunit;
-
-
-
-	public class StinkFlyProcessor : IBuilder
-	{
-		private Dictionary<string, Func<CallContext,string>> _lookup;
-		public StinkFlyProcessor()
-		{
-			_lookup = new Dictionary<string, Func<CallContext,string>>();
-		}
-
-		public void Add(string url, Func<CallContext,string> action)
-		{
-			_lookup.Add(url, action);
-		}
-
-		
-
-		public Func<URL> Build(string url, Func<CallContext, string> action)
-		{
-			_lookup.Add(url, action);
-			Func<URL> returnValue = () => new URL();
-			return returnValue;
-		}
-
-		public Func<PARAM,URL> Build<PARAM>(string url, Func<CallContext, string> action)
-		{
-			_lookup.Add(url, action);
-			Func<PARAM,URL> returnValue = x => new URL();
-			return returnValue;
-		}
-
-		public string Process(string url)
-		{
-
-			var func = _lookup.ContainsKey(url) ? _lookup[url] : _lookup.Values.First();
-			var context = new CallContext();
-			return func(context);
-		}
-	}
-
-	public class URL
-	{
-		
-	}
-
-	public interface IBuilder
-	{
-		Func<URL> Build(string url, Func<CallContext, string> action);
-		Func<PARAM, URL> Build<PARAM>(string url, Func<CallContext, string> action);
-	}
-
-
-	public class CallContext
-	{
-		public IDictionary<string,object> Params { get; set;}
-		public CallContext()
-		{
-			Params = new Dictionary<string, object>();
-			Params["name"] = "chris";
-		}
-	}
-	public class StinkFlyApplication
-	{
-		public static IBuilder Builder { get; set;}
-		
-		protected static Func<URL> get(string url, Func<string> action)
-		{
-			Func<CallContext, string> executor = ctx => action();
-			return Builder.Build(url, executor);
-			
-		}
-
-		protected static Func<PARAM,URL> get<PARAM>(string url, Func<PARAM,string> action)
-		{
-			Func<CallContext, string> executor = ctx =>
-			                                     {
-			                                     	var paramValue = (PARAM) ctx.Params["name"];
-			                                     	return action(paramValue);
-			                                     };
-			
-			return Builder.Build<PARAM>(url, executor);
-		}
-	}
 
 
 	public class Executing_urls_with_anonymous_methods

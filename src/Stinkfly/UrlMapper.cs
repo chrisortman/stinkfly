@@ -13,7 +13,11 @@ namespace StinkFly
 			_partTree = new UrlTree<UrlPart>(new FixedStringUrlPart("/"));
 		}
 
-
+		/// <summary>
+		/// Allows you to map a url.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <param name="mapsTo"></param>
 		public void AddUrl(string url, RETURNS mapsTo)
 		{
 			_partTree.MoveToRoot();
