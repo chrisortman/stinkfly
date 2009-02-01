@@ -2,6 +2,7 @@ namespace StinkFly
 {
 	using System.Collections.Generic;
 
+	//TODO: probably merges with CallContext 
 	public class RequestContext
 	{
 		private IDictionary<string, object> _requestParameters;

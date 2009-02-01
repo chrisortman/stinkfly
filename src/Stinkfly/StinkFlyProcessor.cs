@@ -21,14 +21,14 @@ namespace StinkFly
 		public Func<URL> Build(string url, Func<CallContext, string> action)
 		{
 			_urlMapper.AddUrl(url, action);
-			Func<URL> returnValue = () => new URL();
+			Func<URL> returnValue = () => new URL(url);
 			return returnValue;
 		}
 
 		public Func<PARAM,URL> Build<PARAM>(string url, Func<CallContext, string> action)
 		{
 			_urlMapper.AddUrl(url, action);
-			Func<PARAM,URL> returnValue = x => new URL();
+			Func<PARAM,URL> returnValue = x => new URL("");
 			return returnValue;
 		}
 
