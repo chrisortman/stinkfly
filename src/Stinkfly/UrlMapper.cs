@@ -43,23 +43,23 @@ namespace StinkFly
 			_partTree.AddExtensionData("mapsto", mapsTo);
 		}
 
-		public RETURNS Map(string url)
+		public RETURNS Map(RequestContext request)
 		{
-			IEnumerable<UrlPart> parts = _parser.Parse(url);
+			IEnumerable<UrlPart> parts = _parser.Parse(request.Url);
 			_partTree.MoveToRoot();
-			foreach (UrlPart part in parts)
-			{
-				if (_partTree.MoveTo(part))
-				{
+			foreach (UrlPart part in parts) {
+				if (_partTree.MoveTo(part)) {
 					continue;
-				}
-				else if (_partTree.MoveToFirst(x => x.CanMatch(part)))
-				{
+				} else if (_partTree.MoveToFirst(x => x.CanMatch(part,request))) {
 					continue;
 				}
 			}
 
-			return (RETURNS) _partTree.GetExtensionData("mapsto");
+			return (RETURNS)_partTree.GetExtensionData("mapsto");
+		}
+		public RETURNS Map(string url)
+		{
+			return Map(new RequestContext {Url = url});
 		}
 	}
 }

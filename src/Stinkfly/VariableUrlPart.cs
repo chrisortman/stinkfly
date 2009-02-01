@@ -6,7 +6,7 @@ namespace StinkFly
 	{
 		private readonly string _paramName;
 
-		public VariableUrlPart(string chunk)
+		public VariableUrlPart(string chunk) : base(chunk)
 		{
 			if (String.IsNullOrEmpty(chunk))
 			{
@@ -15,10 +15,11 @@ namespace StinkFly
 			_paramName = chunk;
 		}
 
-		public override bool CanMatch(UrlPart other)
+		public override bool CanMatch(UrlPart other,RequestContext context)
 		{
 			if (other is FixedStringUrlPart)
 			{
+				context.AddParameter(_paramName, other.Value);
 				return true;
 			}
 			else if (other is VariableUrlPart)

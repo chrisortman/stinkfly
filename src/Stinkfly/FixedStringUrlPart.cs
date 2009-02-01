@@ -6,7 +6,7 @@ namespace StinkFly
 	{
 		private readonly string _urlChunk;
 
-		public FixedStringUrlPart(string urlChunk)
+		public FixedStringUrlPart(string urlChunk) : base(urlChunk)
 		{
 			if (String.IsNullOrEmpty(urlChunk))
 			{
@@ -35,7 +35,7 @@ namespace StinkFly
 			return _urlChunk.GetHashCode();
 		}
 
-		public override bool CanMatch(UrlPart other)
+		public override bool CanMatch(UrlPart other,RequestContext context)
 		{
 			if (other is FixedStringUrlPart)
 			{
