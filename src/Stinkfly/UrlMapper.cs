@@ -57,6 +57,8 @@ namespace StinkFly
 
 			return (RETURNS)_partTree.GetExtensionData("mapsto");
 		}
+
+	
 		public RETURNS Map(string url)
 		{
 			return Map(new RequestContext {Url = url});

@@ -50,7 +50,7 @@ namespace StinkFly.Tests
 		{
 			class MyApp : StinkFlyApplication
 			{
-				public Func<string,URL> hello_url = get<string>("hello/{name}", name => "Hello " + name);
+				public Func<string,URL> hello_url = get<string>("/hello/{name}", name => "Hello " + name);
 			}
 
 			private string _response;
@@ -60,7 +60,7 @@ namespace StinkFly.Tests
 				StinkFlyApplication.Builder = processor;
 
 				app = new MyApp();
-				_response = processor.Process("hello/chris");
+				_response = processor.Process("/hello/chris");
 
 			}
 
@@ -73,7 +73,7 @@ namespace StinkFly.Tests
 			[Observation]
 			public void Should_be_able_to_generate_urls()
 			{
-				app.hello_url("chris").ToString().ShouldEqual("hello/chris");
+				app.hello_url("chris").ToString().ShouldEqual("/hello/chris");
 			}
 		}
 	}

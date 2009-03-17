@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace StinkFly
 {
 	public class UrlPart
@@ -12,6 +14,11 @@ namespace StinkFly
 		public virtual bool CanMatch(UrlPart other,RequestContext context)
 		{
 			return true;
+		}
+
+		public virtual string GenerateUrlFragment(IDictionary<string, object> parameters)
+		{
+			return Value;
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace StinkFly
 		public Func<PARAM,URL> Build<PARAM>(string url, Func<CallContext, string> action)
 		{
 			_urlMapper.AddUrl(url, action);
-			Func<PARAM,URL> returnValue = x => new URL("");
+			Func<PARAM,URL> returnValue = x => new URL(url);
 			return returnValue;
 		}
 
@@ -37,6 +37,7 @@ namespace StinkFly
 
 			//var func = _lookup.ContainsKey(url) ? _lookup[url] : _lookup.Values.First();
 			var context = new CallContext();
+			CallContext.Current = context;
 			var func = _urlMapper.Map(url);
 			return func(context);
 		}

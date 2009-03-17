@@ -8,6 +8,8 @@ namespace StinkFly
 
 		public VariableUrlPart(string chunk) : base(chunk)
 		{
+			//chunk should contain the { and }
+
 			if (String.IsNullOrEmpty(chunk))
 			{
 				throw new Exception("Can't use empty chunk");
@@ -30,6 +32,10 @@ namespace StinkFly
 			{
 				return false;
 			}
+		}
+
+		public override string GenerateUrlFragment(System.Collections.Generic.IDictionary<string, object> parameters) {
+			return parameters[_paramName.Trim('{', '}')] as string;
 		}
 	}
 }
