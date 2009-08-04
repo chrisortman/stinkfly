@@ -1,0 +1,33 @@
+﻿<#+
+/*
+
+This file contains settings used by T4MVC.tt. The main goal is to avoid the need for users
+to fork the 'official' template in order to achieve what they want.
+
+Right now, there aren't many switches, but we will add more as the need arises.
+ 
+*/
+
+
+// The prefix used for things like MVC.Dinners.Name and MVC.Dinners.Delete(Model.DinnerID)
+const string HelpersPrefix = "MVC";
+
+// The folder under the project that contains the controllers
+const string ControllersFolder = "Controllers";
+
+// The folder under the project that contains the views
+const string ViewsRootFolder = "Views";
+
+// Folders containing static files for which links are generated (e.g. Links.Scripts.Map_js)
+readonly string[] StaticFilesFolders = new string[] {
+    "Scripts",
+    "Content",
+};
+
+// If true, the template marks itself as unsaved as part of its execution.
+// This way it will be saved and update itself next time the project is built.
+// Basically, it keeps marking itself as unsaved to make the next build work.
+// Note: this is certainly hacky, but is the best I could come up with so far.
+bool AlwaysKeepTemplateDirty = true;
+
+#>
