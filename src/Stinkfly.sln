@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StinkFly", "Stinkfly\StinkF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StinkFly.Tests", "..\test\StinkFly.Tests\StinkFly.Tests.csproj", "{E626D3F5-B50E-4C74-93C8-9130C5A1ED43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stinkfly.Mvc", "Stinkfly.Mvc\Stinkfly.Mvc.csproj", "{9254914F-CED0-4A69-9B5D-F96C112635D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{E626D3F5-B50E-4C74-93C8-9130C5A1ED43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E626D3F5-B50E-4C74-93C8-9130C5A1ED43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E626D3F5-B50E-4C74-93C8-9130C5A1ED43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9254914F-CED0-4A69-9B5D-F96C112635D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9254914F-CED0-4A69-9B5D-F96C112635D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9254914F-CED0-4A69-9B5D-F96C112635D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9254914F-CED0-4A69-9B5D-F96C112635D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
